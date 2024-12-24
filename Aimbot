@@ -1,0 +1,59 @@
+local Player = game:GetService('Players').LocalPlayer
+local currentCamera = workspace.CurrentCamera
+local script = true
+local UserInput = game:GetService("UserInputService")
+
+_G.FlingThingsAimbot = false task.wait(.1) _G.FlingThingsAimbot = true
+print("Activated : Fling_Things_Aimnbot.LuaU")
+function closestdist()
+    local currentPlayer
+    local distance = 9e9
+    for _,v in pairs(game:GetService("Players"):GetPlayers()) do
+        local currentrange = (Player.Character.HumanoidRootPart.Position-v.Character.HumanoidRootPart.Position).magnitude
+        if v ~= Player then
+            if distance > currentrange then
+                distance = currentrange
+                currentPlayer = v
+            end
+        end
+    end
+    return currentPlayer
+end
+task.spawn(function()
+    repeat task.wait() until _G.FlingThingsAimbot == false script = false print("Deactivated : Fling_Things_Aimnbot.LuaU")
+end)
+local flingthingsAimbot = true
+function Activate()
+    flingthingsAimbot = true
+    repeat task.wait()
+        local target = closestdist()
+        local main = target.Character:WaitForChild("HumanoidRootPart")
+        if main then
+            if (Player.Character.HumanoidRootPart.Position-main.Position).magnitude < 23 then flingthingsAimbot = false
+                if workspace:FindFirstChild("GrabParts") then
+                    repeat 
+                        if workspace:FindFirstChild("GrabParts") then
+                        mouse1click()
+                        end
+                    task.wait() until not workspace:FindFirstChild("GrabParts")
+                end
+                repeat  
+                    currentCamera.CFrame = CFrame.new(currentCamera.CFrame.Position,main.Position)
+                    
+                        task.wait()
+                    if not workspace:FindFirstChild("GrabParts") then
+                        mouse1click()
+                    end
+                until workspace:FindFirstChild("GrabParts")
+            end
+        end
+    until flingthingsAimbot == false
+end
+
+UserInput.InputBegan:Connect(function(key,bp)
+    if not bp and script == true then
+        if key.KeyCode == Enum.KeyCode.X then
+            Activate()
+        end
+    end
+end)
